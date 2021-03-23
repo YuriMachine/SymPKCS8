@@ -11,4 +11,8 @@ def decrypt(keyfile, ciphertext):
     iv = key_iv[:block_size]
     key = key_iv[block_size:]
     cipher = AlgorithmsIdentifier.getAlg(oid, key, iv)
+
+    if ciphertext[:8] == b"Salted__":
+        ciphertext = ciphertext[16:]
+
     return unpad(cipher.decrypt(ciphertext), block_size)

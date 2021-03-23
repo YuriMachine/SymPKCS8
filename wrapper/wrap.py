@@ -8,8 +8,8 @@ def openssl_key_input(key_input):
     key_index = key.find('=') + 1
     iv_index = iv.find('=') + 1
 
-    key = key[key_index:-1]
-    iv = iv[iv_index:-1]
+    key = key[key_index:].strip()
+    iv = iv[iv_index:].strip()
     return bytearray.fromhex(iv + key)
 
 
