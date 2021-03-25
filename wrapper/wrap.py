@@ -2,18 +2,42 @@ from utils.algorithm_identifier import AlgorithmsIdentifier
 from Crypto.IO import PKCS8, PEM
 
 
-def openssl_key_input(key_input):
-    key, iv = key_input.readlines()
+def openssl_key_parse(key_input):
+    lines = key_input.readlines()
+    if len(lines) == 3:
+        salt, key, iv = lines
+    else:
+        key, iv = lines
 
     key_index = key.find('=') + 1
     iv_index = iv.find('=') + 1
 
     key = key[key_index:].strip()
     iv = iv[iv_index:].strip()
-    return bytearray.fromhex(iv + key)
+    return key, iv
+
+
+def guess_algorithm(key, iv):
+    key_len = len(key) // 2
+    iv_len = len(iv) // 2
+
+    candidates_algorithms = {}
+    for key, val in AlgorithmsIdentifier.algorithms.items():
+        if val.get("block_size") == iv_len:
+            candidates_algorithms[key] = val
+
+    for key, val in candidates_algorithms.items():
+        if val.get("key_size") == key_len:
+            print("Identified algorithm: " + key)
+            return val.get("oid")
+    return None
 
 
 def wrap(key_input):
-    key = openssl_key_input(key_input)
-    pkcs8_key = PKCS8.wrap(key, AlgorithmsIdentifier.getOID("AES_128_CBC"))
+    key, iv = openssl_key_parse(key_input)
+
+    algorithm = guess_algorithm(key, iv)
+    byte_key = bytearray.fromhex(iv + key)
+
+    pkcs8_key = PKCS8.wrap(byte_key, algorithm)
     return PEM.encode(pkcs8_key, "PRIVATE KEY")
