@@ -28,12 +28,12 @@ def select_mode(mode, keyfile, ciphertext, out):
     DECODE: Decodes a symmetric ciphertext wrapped in a PKCS8 container.
     """
     if mode == "wrap":
-        pem_key = wrap(keyfile)
+        pem_key = wrap(keyfile.readlines())
         with open(out, "w") as out_file:
             out_file.writelines(pem_key)
         print("Key correctly wrapped in " + out)
     elif mode == "decode":
-        plaintext = decrypt(keyfile, ciphertext.read())
+        plaintext = decrypt(keyfile.read(), ciphertext.read())
         with open(out, "wb") as out_file:
             out_file.write(plaintext)
         print("Plaintext decrypted in " + out)

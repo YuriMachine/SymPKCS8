@@ -4,7 +4,7 @@ from utils.algorithm_identifier import AlgorithmsIdentifier
 
 
 def decrypt(keyfile, ciphertext):
-    DER_key, _, _ = PEM.decode(keyfile.read())
+    DER_key, _, _ = PEM.decode(keyfile)
     oid, key_iv, _ = PKCS8.unwrap(DER_key)
     block_size = AlgorithmsIdentifier.getBlockSize(oid)
 

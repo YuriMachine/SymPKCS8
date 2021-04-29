@@ -3,11 +3,10 @@ from Crypto.IO import PKCS8, PEM
 
 
 def openssl_key_parse(key_input):
-    lines = key_input.readlines()
-    if len(lines) == 3:
-        salt, key, iv = lines
+    if len(key_input) == 3:
+        salt, key, iv = key_input
     else:
-        key, iv = lines
+        key, iv = key_input
 
     key_index = key.find('=') + 1
     iv_index = iv.find('=') + 1
