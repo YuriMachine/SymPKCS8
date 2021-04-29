@@ -20,15 +20,12 @@ def guess_algorithm(key, iv):
     key_len = len(key) // 2
     iv_len = len(iv) // 2
 
-    candidates_algorithms = {}
     for key, val in AlgorithmsIdentifier.algorithms.items():
         if val.get("block_size") == iv_len:
-            candidates_algorithms[key] = val
+            if val.get("key_size") == key_len:
+                print("Identified algorithm: " + key)
+                return val.get("oid")
 
-    for key, val in candidates_algorithms.items():
-        if val.get("key_size") == key_len:
-            print("Identified algorithm: " + key)
-            return val.get("oid")
     return None
 
 
